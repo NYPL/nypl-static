@@ -1,5 +1,59 @@
-var om1044_12468,om1044_12468_poll=function(){var a=0;return function(d,b){clearInterval(a);a=setInterval(d,b)}}();
-!function(a,d,b){if(a.getElementById(b))om1044_12468_poll(function(){if(window.om_loaded&&!om1044_12468)return om1044_12468=new OptinMonsterApp,om1044_12468.init({a:12468,staging:0,dev:0,beta:0})},25);else{var e=!1,c=a.createElement(d);c.id=b;c.src="https://a.optmstr.com/app/js/api.min.js";c.async=!0;c.onload=c.onreadystatechange=function(){if(!(e||this.readyState&&"loaded"!==this.readyState&&"complete"!==this.readyState))try{e=om_loaded=!0,om1044_12468=new OptinMonsterApp,om1044_12468.init({a:12468,
-  staging:0,dev:0,beta:0}),c.onload=c.onreadystatechange=null}catch(f){}};(document.getElementsByTagName("head")[0]||document.documentElement).appendChild(c)}}(document,"script","omapi-script");function defer(a,d){var b=window[d];b&&"function"===typeof b?a():setTimeout(function(){defer(a,d)},50)}
-function addAccessibility(){jQuery(document).ready(function(a){jQuery(document).bind("OptinMonsterLoaded",function(a,b,e){jQuery("#om-"+b.optin).attr("aria-label","Promotional").attr("role","complementary")})});jQuery(document).ready(function(a){jQuery(document).bind("OptinMonsterOnClose",function(d,b,e){jQuery("#om-"+b.optin).attr("aria-hidden","true");a("#om-"+b.optin).hide()})})}function addCrossDomain(){ga("require","linker");ga("linker:autoLink",["convio.net"]);ga("set","anonymizeIp",!0)}
-defer(addAccessibility,"jQuery");defer(addCrossDomain,"ga");
+let javascriptLoader = {
+  initialize: function() {
+    this.loadOptInMonster()
+
+    this.loadCrossDomain()
+  },
+
+  loadOptInMonster: function() {
+    let optInMonsterLoader = {
+      initialize: function() {
+        this.addScript()
+
+        this.addOptInMonsterAccessibility()
+      },
+
+      addScript: function() {
+        let script = document.createElement('script')
+
+        script.setAttribute('type', 'text/javascript')
+        script.setAttribute('src', 'https://a.optmnstr.com/app/js/api.min.js')
+        script.setAttribute('data-account', '1044')
+        script.setAttribute('data-user', '12468')
+        script.setAttribute('async', '')
+
+        document.body.appendChild(script)
+      },
+
+      addOptInMonsterAccessibility: function() {
+        if (window.jQuery) {
+          document.addEventListener('om.Campaign.load', function(event) {
+            let campaignDiv = jQuery('#om-' + event.detail.Campaign.id)
+
+            campaignDiv
+              .attr('aria-label', 'Promotional')
+              .attr('role', 'complementary')
+              .find('.boston-CloseButton').attr('aria-label', 'Close Promotional region')
+
+            campaignDiv
+              .find('button').removeAttr('aria-live')
+          })
+
+          document.addEventListener('om.Campaign.close', function(event) {
+            jQuery('#om-' + event.detail.Campaign.id).attr('aria-hidden', 'true')
+          })
+        }
+      },
+    }
+
+    optInMonsterLoader.initialize()
+  },
+
+  loadCrossDomain: function() {
+    ga('require', 'linker')
+    ga('linker:autoLink', ['convio.net'])
+    ga('set', 'anonymizeIp', !0)
+  }
+}
+
+javascriptLoader.initialize()
