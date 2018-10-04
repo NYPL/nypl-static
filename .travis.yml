@@ -2,7 +2,7 @@ language: node_js
 node_js:
 - '6'
 before_deploy:
-- npm run initialize
+- npm run prepare
 - pip install --user awscli
 deploy:
 -  provider: script
