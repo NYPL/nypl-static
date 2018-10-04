@@ -26,8 +26,8 @@ These are the corresponding buckets for each environment:
 
 The minified and prepared `js/` directory is automatically deployed via Travis upon commit to the appropriate branch:
 
-| Branch      | Account            | S3 Bucket Name            |
-|-------------|--------------------|---------------------------|
-| development | `nypl-sandbox`     | `nypl-static-development` |
-| qa          | `nypl-digital-dev` | `nypl-static-qa`          |
-| master      | `nypl-digital-dev` | `nypl-static`             |
+| Branch      | Account            | S3 Bucket Name            | Sample Link                                                             |
+|-------------|--------------------|---------------------------|-------------------------------------------------------------------------|
+| development | `nypl-sandbox`     | `nypl-static-development` | [Link](https://s3.amazonaws.com/nypl-static-development/js/advocacy.js) |
+| qa          | `nypl-digital-dev` | `nypl-static-qa`          | [Link](https://s3.amazonaws.com/nypl-static-qa/js/advocacy.js)          |
+| master      | `nypl-digital-dev` | `nypl-static`             | [Link](https://s3.amazonaws.com/nypl-static/js/advocacy.js)             |
