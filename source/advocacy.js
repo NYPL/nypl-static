@@ -1,19 +1,26 @@
 let javascriptLoader = {
-  initialize: function() {
-    this.loadOptInMonster()
+  initialize: function () {
+    this.defer(this.loadOptInMonster, 'jQuery')
 
-    this.loadCrossDomain()
+    this.defer(this.loadCrossDomain, 'ga')
   },
 
-  loadOptInMonster: function() {
+  defer: function (a, d) {
+    let b = window[d]
+    b && 'function' === typeof b ? a() : setTimeout(function () {
+      javascriptLoader.defer(a, d)
+    }, 50)
+  },
+
+  loadOptInMonster: function () {
     let optInMonsterLoader = {
-      initialize: function() {
+      initialize: function () {
         this.addScript()
 
         this.addOptInMonsterAccessibility()
       },
 
-      addScript: function() {
+      addScript: function () {
         let script = document.createElement('script')
 
         script.setAttribute('type', 'text/javascript')
@@ -25,9 +32,9 @@ let javascriptLoader = {
         document.body.appendChild(script)
       },
 
-      addOptInMonsterAccessibility: function() {
+      addOptInMonsterAccessibility: function () {
         if (window.jQuery) {
-          document.addEventListener('om.Campaign.load', function(event) {
+          document.addEventListener('om.Campaign.load', function (event) {
             let campaignDiv = jQuery('#om-' + event.detail.Campaign.id)
 
             campaignDiv
@@ -39,7 +46,7 @@ let javascriptLoader = {
               .find('button').removeAttr('aria-live')
           })
 
-          document.addEventListener('om.Campaign.close', function(event) {
+          document.addEventListener('om.Campaign.close', function (event) {
             jQuery('#om-' + event.detail.Campaign.id).attr('aria-hidden', 'true')
           })
         }
@@ -49,7 +56,7 @@ let javascriptLoader = {
     optInMonsterLoader.initialize()
   },
 
-  loadCrossDomain: function() {
+  loadCrossDomain: function () {
     ga('require', 'linker')
     ga('linker:autoLink', ['convio.net'])
     ga('set', 'anonymizeIp', !0)
