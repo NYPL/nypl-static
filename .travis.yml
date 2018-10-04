@@ -1,4 +1,9 @@
 language: node_js
+cache:
+  bundler: true
+  directories:
+  - node_modules
+  - $HOME/.cache/pip
 node_js:
 - '6'
 before_deploy:
