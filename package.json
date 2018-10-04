@@ -2,7 +2,7 @@
   "name": "nypl-static",
   "version": "1.0.0",
   "scripts": {
-    "initialize": "node initialize.js"
+    "prepare": "node prepare.js"
   },
   "dependencies": {
     "node-minify": "^3.5.0"

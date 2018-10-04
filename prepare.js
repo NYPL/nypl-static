@@ -2,8 +2,13 @@ const compressor = require('node-minify');
 
 const promise = compressor.minify({
   compressor: 'uglify-es',
-  input: './js/advocacy.js',
-  output: './js/dist/advocacy.min.js'
+  input: './source/advocacy.js',
+  output: './js/advocacy.js',
+  options: {
+    warnings: true,
+    mangle: true,
+    compress: true
+  }
 });
 
 promise
