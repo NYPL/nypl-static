@@ -6,6 +6,11 @@ before_deploy:
 - pip install --user awscli
 deploy:
 -  provider: script
+   script: AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEVELOPMENT AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEVELOPMENT ~/.local/bin/aws s3 sync $TRAVIS_BUILD_DIR/js s3://nypl-static-qa/js --region=us-east-1 --delete --acl public-read --exclude ".git/*" --exclude ".*"
+   skip_cleanup: true
+   on:
+     branch: development
+-  provider: script
    script: AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA ~/.local/bin/aws s3 sync $TRAVIS_BUILD_DIR/js s3://nypl-static-qa/js --region=us-east-1 --delete --acl public-read --exclude ".git/*" --exclude ".*"
    skip_cleanup: true
    on:
