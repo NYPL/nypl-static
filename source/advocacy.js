@@ -1,15 +1,37 @@
 let javascriptLoader = {
-  initialize: function () {
-    this.defer(this.loadOptInMonster, 'jQuery')
-
-    this.defer(this.loadCrossDomain, 'ga')
+  isFunction: function(input) {
+    return 'function' === typeof input
   },
 
-  defer: function (a, d) {
-    let b = window[d]
-    b && 'function' === typeof b ? a() : setTimeout(function () {
-      javascriptLoader.defer(a, d)
-    }, 50)
+  initialize: function () {
+    this.loadOptInMonster()
+
+    this.defer('ga_cross_domain', this.loadCrossDomain, function () {
+      return javascriptLoader.isFunction(window['ga'])
+    })
+  },
+
+  getLoadedJquery: function() {
+    if (this.isFunction(window['jQuery'])) {
+      return window['jQuery']
+    }
+
+    if (this.isFunction(window['optimizely']['$'])) {
+      return window['optimizely']['$']
+    }
+
+    return null
+  },
+
+  defer: function (name, runAfterTrue, testForTrue) {
+    if (!this.isFunction(runAfterTrue)) throw 'runAfterTrue is not a function'
+    if (!this.isFunction(testForTrue)) throw 'runUntilTrue is not a function'
+
+    if (testForTrue()) {
+      runAfterTrue()
+    } else {
+      setTimeout(function() { javascriptLoader.defer(name, runAfterTrue, testForTrue) }, 50);
+    }
   },
 
   loadOptInMonster: function () {
@@ -17,7 +39,9 @@ let javascriptLoader = {
       initialize: function () {
         this.addScript()
 
-        this.addOptInMonsterAccessibility()
+        javascriptLoader.defer('accessibility', this.addOptInMonsterAccessibility, function () {
+          return javascriptLoader.isFunction(javascriptLoader.getLoadedJquery())
+        })
       },
 
       addScript: function () {
@@ -33,23 +57,28 @@ let javascriptLoader = {
       },
 
       addOptInMonsterAccessibility: function () {
-        if (window.jQuery) {
-          document.addEventListener('om.Campaign.load', function (event) {
-            let campaignDiv = jQuery('#om-' + event.detail.Campaign.id)
+        let loadedJquery = javascriptLoader.getLoadedJquery()
 
-            campaignDiv
-              .attr('aria-label', 'Promotional')
-              .attr('role', 'complementary')
-              .find('.boston-CloseButton').attr('aria-label', 'Close Promotional region')
-
-            campaignDiv
-              .find('button').removeAttr('aria-live')
-          })
-
-          document.addEventListener('om.Campaign.close', function (event) {
-            jQuery('#om-' + event.detail.Campaign.id).attr('aria-hidden', 'true')
-          })
+        if (!loadedJquery) {
+          console.error('Unable to add OptinMonster accessibility (no jQuery found)')
+          return false
         }
+
+        document.addEventListener('om.Campaign.load', function (event) {
+          let campaignDiv = loadedJquery('#om-' + event.detail.Campaign.id)
+
+          campaignDiv
+            .attr('aria-label', 'Promotional')
+            .attr('role', 'complementary')
+            .find('.boston-CloseButton').attr('aria-label', 'Close Promotional region')
+
+          campaignDiv
+            .find('button').removeAttr('aria-live')
+        })
+
+        document.addEventListener('om.Campaign.close', function (event) {
+          loadedJquery('#om-' + event.detail.Campaign.id).attr('aria-hidden', 'true')
+        })
       },
     }
 
