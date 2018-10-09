@@ -70,7 +70,7 @@ let javascriptLoader = {
           campaignDiv
             .attr('aria-label', 'Promotional')
             .attr('role', 'complementary')
-            .find('.boston-CloseButton').attr('aria-label', 'Close Promotional region')
+            .find('.' + event.detail.Campaign.ns + '-CloseButton').attr('aria-label', 'Close Promotional region')
 
           campaignDiv
             .find('button').removeAttr('aria-live')
