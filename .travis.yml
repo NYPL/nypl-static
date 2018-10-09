@@ -21,7 +21,7 @@ deploy:
    on:
      branch: qa
 -  provider: script
-   script: AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION ~/.local/bin/aws s3 sync $TRAVIS_BUILD_DIR/js s3://nypl-static/js --region=us-east-1 --delete --acl public-read --exclude ".git/*" --exclude ".*"
+   script: AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION ~/.local/bin/aws s3 sync $TRAVIS_BUILD_DIR/js s3://nypl-static/js --region=us-east-1 --delete --acl public-read --exclude ".git/*" --exclude ".*" --cache-control max-age=300
    skip_cleanup: true
    on:
      branch: master
