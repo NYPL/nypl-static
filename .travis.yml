@@ -1,9 +1,32 @@
-language: generic
+language: node_js
+cache:
+  bundler: true
+  directories:
+  - node_modules
+  - $HOME/.cache/pip
+node_js:
+- '6'
 before_deploy:
-  pip install --user awscli
+- npm run prepare
+- pip install --user awscli
 deploy:
-  provider: script
-  script: ~/.local/bin/aws s3 sync $TRAVIS_BUILD_DIR s3://nypl-static-qa --region=us-east-1 --delete --acl public-read --exclude ".git/*" --exclude ".*"
-  skip_cleanup: true
-  on:
-    branch: initial
+-  provider: script
+   script: AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEVELOPMENT AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEVELOPMENT ~/.local/bin/aws s3 sync $TRAVIS_BUILD_DIR/js s3://nypl-static-development/js --region=us-east-1 --delete --acl public-read --exclude ".git/*" --exclude ".*"
+   skip_cleanup: true
+   on:
+     branch: development
+-  provider: script
+   script: AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA ~/.local/bin/aws s3 sync $TRAVIS_BUILD_DIR/js s3://nypl-static-qa/js --region=us-east-1 --delete --acl public-read --exclude ".git/*" --exclude ".*"
+   skip_cleanup: true
+   on:
+     branch: qa
+-  provider: script
+   script: AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION ~/.local/bin/aws s3 sync $TRAVIS_BUILD_DIR/js s3://nypl-static/js --region=us-east-1 --delete --acl public-read --exclude ".git/*" --exclude ".*" --cache-control max-age=300
+   skip_cleanup: true
+   on:
+     branch: master
+env:
+  global:
+  - secure: lnm9VoV86UsHKZ4zc2/my2J2ObfLuYk14iJHoPeBuyFDfQ3Ro4iqU6pYS3uB7uAmyvwtmEKPW0Z5axdhRM/s87KG90TXHGWcCPvIFngFMXfBzlppvRPDmCl5n9+YGg2mKo7fgbJS5xltg35nEbOzmm3t9NIOdYR75/nemYiQeEaxQSH1K54uoBiisB24VVhxpq0gQuNZwccUR8ihRIfRxP9mZRB482YNAeuD6iN2AtyF7mazmsgM0nrtCL8EX7JzE4h39RWD+QA+hbhItCnVuTkjOTlymJG+FEwfgaLC+vlFNc9OoE5f4BVkzMLSt+EU2cob9GPsRuZ5+uv4TQtYefozEECuusifqb+hO8Saty+A0StP56h8fZfh6XrVqDIcxeLYK5GNSh10bwRhfP9F1Zf157fwohUxauw5SWJv/XRllAa8LuquSR8ibagmZgKHoi1T3qNNJBoBKDhqkh24/BOouuoj+fkNujmss0Yjuhnm9XngjBTKrmx4MbJru7kQGNDksGatG9MDWEBETpye0PpXE67iXlNKNEwrApuO8LrcrK1H5nhsvbcFvpAQ6QVv/8hsKfBdXu+Wfy2qpAmPpTVE8MKOaoVdHJim2u9f4Ab6HNlPiMipZdOY6unM+H9XhVw7Joqn7pgHgpKrrNU8hyHbLToxZRVESWbQSPUCLgE=
+  - secure: MkKysI32BCjRf14v8JiM8RCAh5eiI76lrWxietTg6v14+qkzoB1qa/e6ZdQem5YleOQJcBbxAl0no9x0MZjKIsLnRgBTop9fd8bq8W4KitkXuiVagXY+eEeOVBJpulkD7wfO4JXtgDe5mmj5+s3ZlFUxo8atRfE0xgqeETao4li/DxvAN24bHHQpyKPTHg1SV6z37oSsYqofXexfl0WiCfDDMCWA0+XXpzx+O6yOqXAU+TT+W9WkBbxuTIax8VX8u7Wkn7pa3hWliSQUCllqx6fVGnp63TUvC7wQMzBCLO/942Tqub4TOahtk8LoiIdP5kUOcpiqtHp+ZBB0cczseGJ5zwfJ/3iswgHoGb+rEOHQ28RqQih1+DHQAnl3KsOToWXPVkI22iBWypp1kJRK2/NTzO6cUd6oZPQSwD6krfLgFY9K4G05PqzarvC/b3+K/4VNl9JQFdDQXZAFou3flw0FalSiMchGwej8qg41F1KUnl9VQUfiWaqux9jrl7X19mnRXTvuHdpiNkB4FhpkAXal53r3feWDZFkj2pLmhjVOuLleK5SHVQAPGBpqQCVrKK8BHmJtYDI7XQ1bwhswu+G7qDs7OvNgE0a19SzSaNs6MpelGpljkoMdcvlKVp9ICEgaHdcqzM9qdfYBKppfPCjyc5zMJYhq8cy2BtO9eaI=
+  - secure: WdCpRtjEF36yhjjUZ/sBAWAHEve8xCKGlOHGV/2sqtRtHJYz8C630+oRrwb34R+0ickn16VUy27iEIEDTORDdtwemR/UV2fROLRs3HvI9pTBdkjcq1uIfLCUEE3Sc1HL56TX5xjLSWhMVoJQ/TbXubBXeaLnFrKgUHcZLnnLRyNxxUCrW5BaVPi0T2n0yczJVrw/ZwXmM92LVbNqveuEITb9usIUDAWgXy4E8pknpu9hijIx8Uq71V4uKm0HrG9VppUmiAMdGiYq8iRTYoDZObA0GNl7SVWqBWbdk1eew4bhBmowO1UBZrlJO4JKCTv1ZNUughFNYQjP+MB7Pm/gANrs5MPLv6687H873M8i3/9RlHNbKMWf0tzKHzJ1EOM1d7yzqhO2hAt1+G2xRuFKvPjUWVRv40FQEdakfGouVT3R2YezRx8CSNMY7Yc2b9u2D6jNNjzeKcU3aQUsUu10p5qu+lyj9Iyrz9ciG2pQcSYelEJ5pZP3cJhNRXGYJPZp+Thlvq96p5gm/RY2wjYhhMLrYwM8U0MmzlRbPtZ5G+NMm4/4bwD0bNvstWD3uhc4g5BOVp+zGyORfidksKCEhHBxAEjrRyTc540HEnn0DS4BkGb1PtXqH7HJltRBz1vDYB9bdCC8tZzgRIqpnZ8yYjj4ea6aBd1zOpgqa0TBR6E=

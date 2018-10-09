@@ -1,0 +1,10 @@
+{
+  "name": "nypl-static",
+  "version": "1.0.0",
+  "scripts": {
+    "prepare": "node prepare.js"
+  },
+  "dependencies": {
+    "node-minify": "^3.5.0"
+  }
+}
