@@ -78,6 +78,7 @@ let javascriptLoader = {
 
         document.addEventListener('om.Campaign.close', function (event) {
           loadedJquery('#om-' + event.detail.Campaign.id).attr('aria-hidden', 'true')
+          loadedJquery('#om-' + event.detail.Campaign.id).hide()
         })
       },
     }
