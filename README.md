@@ -1,6 +1,6 @@
 # nypl-static
 
-This repo hosts files that are deployed to the `nypl-static` S3 bucket and intended to be used for global JavaScript and static resources.
+This repo hosts files that are deployed to the `nypl-static` and `nypl-static-qa` S3 buckets and intended to be used for global JavaScript and static resources.
 
 Most NYPL web properties (e.g. WWW, Encore, Shared Collection Catalog, other React Applications) load the `js/advocacy.js` file on page load.
 
@@ -16,15 +16,19 @@ These are the corresponding buckets for each environment:
 
 ## Workflow
 
-1. Create a feature branch from `master`.
-2. Update files in `source/` directory.
+1. Create a feature branch from `development`.
+2. Update javascript files in `source/` directory. This will get minified and copied over to the `/base` directory which is the main directory that will be deployed to the appropriate s3 bucket.
 3. If creating a new file and minimization is desired for file, update `prepare.js` accordingly.
 4. Merge feature branch to `development` after proper code review.
-5. Files will be deployed and minified and prepared via Travis.
+6. Merge `development` into `qa` and then `qa` into `master`.
+5. Files will be minified, prepared, and deployed via Travis.
 
 ## Deployment
 
-The minified and prepared `js/` directory is automatically deployed via Travis upon commit to the appropriate branch:
+*Note*: The s3 buckets previously supported a `/js` directory which is kept to support existing apps that use it. For newer releases after 10/20, use the `/base/js` directory.
+
+All folders in the `/base` directory will be deployed to the appropriate s3 bucket.
+The minified and prepared `/base/js/` directory is automatically deployed via Travis upon commit to the appropriate branch:
 
 | Branch      | Account            | S3 Bucket Name            | Sample Link                                                                                               |
 |-------------|--------------------|---------------------------|-----------------------------------------------------------------------------------------------------------|
